@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenStream - Free Movies</title>
+    <meta name="description" content="Watch free public-domain and Creative Commons movies on OpenStream.">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <a class="logo" href="{{ url_for('home') }}">OpenStream</a>
+        <nav aria-label="Main">
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="#movies">Movies</a></li>
+            </ul>
+        </nav>
+        <div class="search-bar">
+            <input type="search" id="searchInput" placeholder="Search movies..." aria-label="Search movies">
+        </div>
+    </header>
+
+    {% if movies %}
+    {% set hero = movies[0] %}
+    <section class="hero">
+        <img class="hero-bg" src="{{ hero['poster']|media_url }}" alt="" aria-hidden="true">
+        <div class="hero-content">
+            <div class="hero-label">Now featured</div>
+            <h1>{{ hero['title'] }} ({{ hero['year'] }})</h1>
+            <p>{{ hero['description'] }}</p>
+            <button class="play-btn" id="heroPlay" type="button"
+                    data-video="{{ hero['video']|media_url }}" data-title="{{ hero['title'] }}">&#9654; Watch Now</button>
+        </div>
+        <img class="hero-poster" src="{{ hero['poster']|media_url }}" alt="{{ hero['title'] }} poster">
+    </section>
+    {% else %}
+    <section class="hero hero-empty">
+        <div class="hero-content">
+            <h1>OpenStream</h1>
+            <p>No movies have been added yet. Check back soon.</p>
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="movie-list" id="movies">
+        <h2>All Movies</h2>
+        <div class="grid">
+            {% for movie in movies %}
+            <article class="movie-card" tabindex="0" role="button"
+                     aria-label="Play {{ movie['title'] }}"
+                     data-video="{{ movie['video']|media_url }}" data-title="{{ movie['title'] }}">
+                <div class="thumbnail">
+                    <img src="{{ movie['poster']|media_url }}" alt="{{ movie['title'] }} poster"
+                         data-title="{{ movie['title'] }}" loading="lazy">
+                </div>
+                <h3>{{ movie['title'] }} ({{ movie['year'] }})</h3>
+                <p>{{ movie['description'] }}</p>
+            </article>
+            {% endfor %}
+        </div>
+        {% if not movies %}<p class="empty">Nothing to watch yet.</p>{% endif %}
+        <p class="no-results" id="noResults" hidden>No movies match your search.</p>
+    </section>
+
+    <footer>OpenStream &middot; Only public-domain and Creative Commons films are shown here.</footer>
+
+    <div class="video-modal" id="videoModal" role="dialog" aria-modal="true" aria-label="Video player">
+        <span class="modal-title" id="modalTitle"></span>
+        <button class="close-btn" id="closeBtn" type="button" aria-label="Close video">&times;</button>
+        <div class="modal-content">
+            <video id="moviePlayer" playsinline controls preload="none"></video>
+            <p class="player-error" id="playerError" hidden>This video could not be played. It may be missing or in an unsupported format.</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

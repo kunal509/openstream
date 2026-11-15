@@ -1,0 +1,33 @@
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+body { background-color: #141414; color: #fff; min-height: 100vh; padding: 40px 20px; }
+.wrap { max-width: 1000px; margin: 0 auto; }
+.topnav { display: flex; gap: 18px; justify-content: flex-end; align-items: center; margin-bottom: 20px; font-size: 14px; }
+.topnav a, .linkbtn { color: #aaa; text-decoration: none; background: none; border: none; cursor: pointer; font-size: 14px; }
+.topnav a:hover, .linkbtn:hover { color: #fff; }
+.admin-container { display: flex; gap: 40px; align-items: flex-start; }
+.admin-box { background-color: #000; padding: 30px; border-radius: 8px; box-shadow: 0 0 20px rgba(229,9,20,.4); flex: 1; min-width: 0; }
+.admin-box.narrow { max-width: 440px; margin: 8vh auto 0; }
+h2 { text-align: center; color: #e50914; margin: 0 0 20px; }
+label { display: block; margin-top: 15px; font-weight: bold; color: #aaa; font-size: 14px; }
+.hint { color: #777; font-size: 12px; margin-top: 4px; }
+input, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #333; background-color: #222; color: #fff; }
+input[type=file] { padding: 8px; font-size: 13px; }
+.btn-add { width: 100%; padding: 12px; margin-top: 25px; background-color: #e50914; color: #fff; border: none; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer; transition: .3s; }
+.btn-add:hover { background-color: #f40612; }
+.back-link { display: block; text-align: center; margin-top: 18px; color: #aaa; text-decoration: none; }
+.back-link:hover { color: #fff; }
+.movie-list-item { background-color: #222; padding: 15px; margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; gap: 10px; border-left: 4px solid #333; }
+.movie-info { display: flex; flex-direction: column; min-width: 0; }
+.movie-title { font-weight: bold; font-size: 16px; overflow-wrap: anywhere; }
+.movie-year { color: #aaa; font-size: 12px; }
+.row-actions { display: flex; gap: 10px; align-items: center; }
+.row-actions form { margin: 0; }
+.btn-delete { background: transparent; color: #aaa; border: 1px solid #aaa; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: .3s; font-size: 14px; }
+.btn-delete:hover { background-color: #e50914; color: #fff; border-color: #e50914; }
+.btn-edit { background-color: #333; color: #fff; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 14px; border: 1px solid #333; transition: .3s; }
+.btn-edit:hover { background-color: #555; border-color: #555; }
+.flash { padding: 12px 14px; border-radius: 4px; margin-bottom: 12px; font-size: 14px; }
+.flash.error { background: #3a1214; border: 1px solid #e50914; }
+.flash.ok { background: #10301b; border: 1px solid #22c55e; }
+.muted { color: #aaa; text-align: center; }
+@media (max-width: 800px) { .admin-container { flex-direction: column; } .admin-box { width: 100%; } }

@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow">
+  <title>Sales Dashboard - NovaMart</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f1624;
+      --panel2:#0c1220;
+      --text:#e9eefc;
+      --muted:#a9b3d1;
+      --brand:#e50914;
+      --brand2:#ff3b30;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --line:rgba(255,255,255,.08);
+      --shadow: 0 16px 50px rgba(0,0,0,.55);
+      --radius:16px;
+    }
+
+    *{box-sizing:border-box; margin:0; padding:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;}
+
+    body{
+      background:
+        radial-gradient(1200px 800px at 10% 0%, rgba(229,9,20,.22), transparent 55%),
+        radial-gradient(1000px 700px at 90% 10%, rgba(56,189,248,.16), transparent 52%),
+        radial-gradient(900px 650px at 40% 110%, rgba(168,85,247,.12), transparent 52%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    /* Layout */
+    .app{
+      display:grid;
+      grid-template-columns: 260px 1fr;
+      min-height:100vh;
+    }
+
+    .sidebar{
+      padding:22px 18px;
+      position:sticky;
+      top:0;
+      height:100vh;
+      border-right:1px solid rgba(255,255,255,.06);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      backdrop-filter: blur(10px);
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      padding:12px 12px;
+      border-radius:14px;
+      background: rgba(229,9,20,.10);
+      border:1px solid rgba(229,9,20,.22);
+      box-shadow: 0 10px 30px rgba(229,9,20,.12);
+      margin-bottom:18px;
+    }
+
+    .brand .dot{
+      width:14px; height:14px; border-radius:50%; background: var(--brand);
+      box-shadow: 0 0 0 6px rgba(229,9,20,.18), 0 0 30px rgba(229,9,20,.35);
+    }
+    .brand h1{font-size:14px; line-height:1.1; letter-spacing:.4px;}
+    .brand p{font-size:12px; color:var(--muted); margin-top:2px;}
+
+    .nav{
+      display:flex; flex-direction:column; gap:8px;
+      margin-top:10px;
+    }
+    .nav a{
+      color:var(--muted);
+      text-decoration:none;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid transparent;
+      transition: .2s ease;
+      display:flex; align-items:center; gap:10px;
+      background: rgba(255,255,255,.01);
+    }
+    .nav a:hover{
+      border-color: rgba(255,255,255,.10);
+      color:var(--text);
+      background: rgba(255,255,255,.03);
+      transform: translateY(-1px);
+    }
+    .nav a.active{
+      color:var(--text);
+      border-color: rgba(229,9,20,.28);
+      background: linear-gradient(180deg, rgba(229,9,20,.18), rgba(255,255,255,.02));
+    }
+    .nav .icon{
+      width:28px; height:28px; border-radius:10px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .main{
+      padding:26px 26px 40px;
+    }
+
+    .topbar{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
+      margin-bottom:18px;
+    }
+
+    header{
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .title{
+      font-size:24px; font-weight:800;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    .actions{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;
+    }
+
+    .btn{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition:.2s ease;
+      font-weight:700;
+      font-size:13px;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.18);}
+
+    .btn.primary{
+      border-color: rgba(229,9,20,.35);
+      background: linear-gradient(180deg, rgba(229,9,20,.25), rgba(255,255,255,.02));
+      box-shadow: 0 10px 30px rgba(229,9,20,.14);
+    }
+
+    /* Panels */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card-inner{padding:16px;}
+
+    .kpi{
+      display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
+    }
+    .kpi .label{color:var(--muted); font-size:12px; font-weight:700;}
+    .kpi .value{font-size:26px; font-weight:900; margin-top:6px; letter-spacing:.2px;}
+    .kpi .delta{
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color:var(--muted);
+      font-weight:800;
+      font-size:12px;
+      display:flex; align-items:center; gap:6px;
+      white-space:nowrap;
+    }
+    .delta .arrow{display:inline-block; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent;}
+    .delta.up{border-color: rgba(34,197,94,.35); color: rgba(34,197,94,.95); background: rgba(34,197,94,.08);}
+    .delta.up .arrow{border-bottom:10px solid rgba(34,197,94,.95);}
+    .delta.down{border-color: rgba(245,158,11,.35); color: rgba(245,158,11,.95); background: rgba(245,158,11,.08);}
+    .delta.down .arrow{border-top:10px solid rgba(245,158,11,.95);}
+
+    .filters{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:10px;
+    }
+
+    .field label{display:block; color:var(--muted); font-size:12px; font-weight:800; margin-bottom:6px;}
+    .field input, .field select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.15);
+      color:var(--text);
+      outline:none;
+      font-weight:700;
+      font-size:13px;
+    }
+    .field input{appearance:none;}
+
+    .small-note{color:var(--muted); font-size:12px; margin-top:10px; line-height:1.4;}
+
+    .two-col{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+
+    .chart-wrap{padding:14px 14px 6px;}
+    .chart-head{
+      display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
+      padding:14px 16px 0;
+    }
+    .chart-head h3{font-size:14px; letter-spacing:.2px;}
+    .chart-head p{font-size:12px; color:var(--muted); margin-top:4px; line-height:1.3;}
+
+    canvas{width:100%; height:240px; display:block;}
+    .legend{
+      display:flex; gap:12px; flex-wrap:wrap;
+      padding:8px 16px 14px;
+    }
+    .legend .item{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12px; font-weight:800;}
+    .swatch{width:10px; height:10px; border-radius:3px;}
+
+    .table-wrap{padding:0 0 10px;}
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+    }
+    thead th{
+      text-align:left;
+      font-size:12px;
+      color:var(--muted);
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      cursor:pointer;
+      user-select:none;
+      position:sticky; top:0;
+      background: rgba(8,12,18,.85);
+      backdrop-filter: blur(8px);
+    }
+    tbody td{
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      font-weight:800;
+      font-size:13px;
+      color: rgba(233,238,252,.95);
+    }
+    tbody tr:hover{background: rgba(255,255,255,.02);}
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color:var(--muted);
+      font-weight:900;
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    /* Top products */
+    .prod{padding:12px 16px 16px;}
+    .prod h3{font-size:14px; margin-bottom:10px;}
+    .prod .row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:12px 0;}
+    .prod .name{font-weight:900; font-size:13px;}
+    .bar{
+      height:10px; flex:1;
+      background: rgba(255,255,255,.08);
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .bar > span{
+      display:block; height:100%;
+      width:40%;
+      background: linear-gradient(90deg, rgba(229,9,20,.9), rgba(56,189,248,.75));
+      border-radius:999px;
+      box-shadow: 0 10px 30px rgba(229,9,20,.18);
+    }
+    .prod .qty{color:var(--muted); font-weight:900; font-size:12px; white-space:nowrap;}
+
+    /* Responsive */
+    @media (max-width: 1050px){
+      .app{grid-template-columns: 1fr;}
+      .sidebar{position:relative; height:auto;}
+      .main{padding:18px;}
+      .two-col{grid-template-columns:1fr;}
+      canvas{height:220px;}
+      .filters{grid-template-columns: 1fr;}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="dot"></div>
+        <div>
+          <h1>NovaMart</h1>
+          <p>Sales Intelligence</p>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="active" href="#">
+          <span class="icon">📈</span>
+          Sales Dashboard
+        </a>
+        <a href="/admin">
+          <span class="icon">🎬</span>
+          Admin Portal
+        </a>
+        <form action="{{ url_for('logout') }}" method="POST" style="margin:0">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <a href="#" onclick="this.closest('form').submit(); return false;">
+            <span class="icon">🚪</span>
+            Log out
+          </a>
+        </form>
+
+        <a href="/">
+          <span class="icon">🏠</span>
+          Home
+        </a>
+      </nav>
+
+      <div class="small-note">
+        Demo dashboard (client-side). Replace `demoData` with real sales when backend is ready.
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <header>
+          <div class="title">Sales Dashboard</div>
+          <div class="subtitle">Track revenue, orders, and category performance with responsive, working panels.</div>
+        </header>
+        <div class="actions">
+          <button class="btn" id="btnExport">Export (CSV)</button>
+          <button class="btn primary" id="btnRefresh">Refresh Data</button>
+        </div>
+      </div>
+
+      <!-- KPI row -->
+      <section class="grid" aria-label="KPI Summary">
+        <div class="card" style="grid-column: span 3;">
+          <div class="card-inner kpi">
+            <div>
+              <div class="label">Revenue</div>
+              <div class="value" data-kpi="revenue">0</div>
+            </div>
+            <div class="delta up"><span class="arrow"></span><span data-kpi-delta="revenue">+12.4%</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 3;">
+          <div class="card-inner kpi">
+            <div>
+              <div class="label">Orders</div>
+              <div class="value" data-kpi="orders">0</div>
+            </div>
+            <div class="delta up"><span class="arrow"></span><span data-kpi-delta="orders">+6.1%</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 3;">
+          <div class="card-inner kpi">
+            <div>
+              <div class="label">Avg. Order Value</div>
+              <div class="value" data-kpi="aov">0</div>
+            </div>
+            <div class="delta up"><span class="arrow"></span><span data-kpi-delta="aov">+4.9%</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 3;">
+          <div class="card-inner kpi">
+            <div>
+              <div class="label">Conversion Rate</div>
+              <div class="value" data-kpi="conversion">0%</div>
+            </div>
+            <div class="delta down"><span class="arrow"></span><span data-kpi-delta="conversion">-1.2%</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filters -->
+      <section class="card" style="margin-top:14px;">
+        <div class="card-inner">
+          <div class="filters">
+            <div class="field">
+              <label for="fromDate">From</label>
+              <input type="date" id="fromDate" />
+            </div>
+            <div class="field">
+              <label for="toDate">To</label>
+              <input type="date" id="toDate" />
+            </div>
+            <div class="field">
+              <label for="category">Category</label>
+              <select id="category">
+                <option value="all" selected>All Categories</option>
+              </select>
+            </div>
+          </div>
+          <div class="small-note">
+            Tip: change filters and watch the charts + table update instantly.
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts + Products -->
+      <section class="grid" style="margin-top:14px;">
+        <div class="card" style="grid-column: span 8;">
+          <div class="chart-head">
+            <div>
+              <h3>Revenue by Day</h3>
+              <p>Visual trend for the selected date range.</p>
+            </div>
+            <div class="pill" id="pillRange">Last 14 days</div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="revenueChart" width="900" height="260"></canvas>
+          </div>
+          <div class="legend">
+            <div class="item"><span class="swatch" style="background: rgba(229,9,20,.95)"></span>Revenue</div>
+            <div class="item"><span class="swatch" style="background: rgba(56,189,248,.85)"></span>Forecast</div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 4;">
+          <div class="prod">
+            <h3>Top Products</h3>
+            <div id="topProducts"></div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 12;">
+          <div class="chart-head">
+            <div>
+              <h3>Orders by Category</h3>
+              <p>Share of orders per category (relative to current filters).</p>
+            </div>
+            <div class="pill" id="pillCategory">All Categories</div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="categoryChart" width="1100" height="240"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sales Table -->
+      <section class="card" style="margin-top:14px;">
+        <div class="chart-head">
+          <div>
+            <h3>Sales Transactions</h3>
+            <p>Sortable table (click column headers). Works without backend.</p>
+          </div>
+          <div class="pill">Showing <span id="rowCount">0</span> rows</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th data-sort="date">Date</th>
+                <th data-sort="orderId">Order ID</th>
+                <th data-sort="customer">Customer</th>
+                <th data-sort="category">Category</th>
+                <th data-sort="amount">Amount</th>
+                <th data-sort="status">Status</th>
+              </tr>
+            </thead>
+            <tbody id="salesTbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // ----------------------
+    // Demo dataset generator
+    // ----------------------
+    const categories = [
+      { key: 'electronics', name: 'Electronics', weight: 1.05 },
+      { key: 'fashion', name: 'Fashion', weight: 0.85 },
+      { key: 'home', name: 'Home & Kitchen', weight: 0.92 },
+      { key: 'beauty', name: 'Beauty', weight: 0.78 },
+      { key: 'sports', name: 'Sports', weight: 0.88 },
+    ];
+
+    const demoData = (() => {
+      // create 30 days of synthetic transactions
+      const today = new Date();
+      const start = new Date();
+      start.setDate(today.getDate() - 29);
+
+      const rand = (min, max) => Math.random() * (max - min) + min;
+      const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+      const customers = ['Ava', 'Noah', 'Mia', 'Ethan', 'Olivia', 'Liam', 'Sophia', 'Lucas', 'Emma', 'Aria', 'James', 'Zoe'];
+      const statuses = ['Paid', 'Pending', 'Refunded'];
+
+      const transactions = [];
+      for (let d = 0; d < 30; d++) {
+        const dt = new Date(start);
+        dt.setDate(start.getDate() + d);
+
+        // daily order count varies
+        const baseOrders = 45 + Math.round(Math.sin(d/4) * 10 + rand(-6, 12));
+        const dayOrders = Math.max(15, baseOrders);
+
+        for (let i = 0; i < dayOrders; i++) {
+          const cat = pick(categories);
+          const status = Math.random() < 0.82 ? 'Paid' : (Math.random() < 0.15 ? 'Pending' : 'Refunded');
+          const base = 24 + rand(0, 140) * cat.weight;
+          const amount = Math.round((status === 'Refunded' ? base * -1 : base) * 100) / 100;
+          const orderId = 'NM-' + String(Math.floor(rand(10000, 99999))).padStart(5,'0');
+          const customer = pick(customers);
+
+          transactions.push({
+            date: dt.toISOString().slice(0,10),
+            orderId,
+            customer,
+            category: cat.key,
+            amount,
+            status
+          });
+        }
+      }
+
+      return { transactions };
+    })();
+
+    // ----------------------
+    // Helpers
+    // ----------------------
+    const $ = (id) => document.getElementById(id);
+
+    function formatMoney(n){
+      const sign = n < 0 ? '-' : '';
+      const abs = Math.abs(n);
+      return sign + '$' + abs.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    function formatInt(n){
+      return Math.round(n).toLocaleString();
+    }
+
+    function parseDate(yyyyMmDd){
+      const [y,m,d] = yyyyMmDd.split('-').map(Number);
+      return new Date(y, m-1, d);
+    }
+
+    function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+    // ----------------------
+    // Chart drawing (canvas)
+    // ----------------------
+    function drawLineChart(canvas, labels, values, forecast){
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0,0,w,h);
+
+      const padding = {l:48, r:18, t:16, b:34};
+      const plotW = w - padding.l - padding.r;
+      const plotH = h - padding.t - padding.b;
+
+      // grid
+      const gridLines = 4;
+      ctx.strokeStyle = 'rgba(255,255,255,.08)';
+      ctx.lineWidth = 1;
+      for(let i=0;i<=gridLines;i++){
+        const y = padding.t + (plotH/gridLines)*i;
+        ctx.beginPath();
+        ctx.moveTo(padding.l, y);
+        ctx.lineTo(w - padding.r, y);
+        ctx.stroke();
+      }
+
+      const all = values.concat(forecast);
+      const minV = Math.min(...all);
+      const maxV = Math.max(...all);
+      const span = (maxV - minV) || 1;
+      const yScale = (v) => padding.t + plotH - ((v - minV) / span) * plotH;
+      const xScale = (i) => padding.l + (plotW/(labels.length-1))*i;
+
+      // axes labels (first/middle/last)
+      ctx.fillStyle = 'rgba(169,179,209,.95)';
+      ctx.font = '12px ui-sans-serif, system-ui';
+      const pickIdx = [0, Math.floor(labels.length/2), labels.length-1];
+      pickIdx.forEach(i => {
+        const x = xScale(i);
+        const text = labels[i];
+        ctx.fillText(text, x - ctx.measureText(text).width/2, h - 12);
+      });
+
+      function drawSeries(series, color, dashed=false){
+        ctx.beginPath();
+        for(let i=0;i<series.length;i++){
+          const x = xScale(i);
+          const y = yScale(series[i]);
+          if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        }
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        if(dashed) ctx.setLineDash([7,6]); else ctx.setLineDash([]);
+        ctx.stroke();
+
+        // points (for current series only - revenue)
+        if(!dashed){
+          for(let i=0;i<series.length;i++){
+            const x = xScale(i);
+            const y = yScale(series[i]);
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x,y,4,0,Math.PI*2);
+            ctx.fill();
+          }
+        }
+      }
+
+      drawSeries(values, 'rgba(229,9,20,.95)', false);
+      drawSeries(forecast, 'rgba(56,189,248,.85)', true);
+
+      // glow under line
+      ctx.save();
+      ctx.globalAlpha = 0.08;
+      ctx.fillStyle = 'rgba(229,9,20,.9)';
+      ctx.beginPath();
+      ctx.moveTo(xScale(0), yScale(values[0]));
+      for(let i=1;i<values.length;i++) ctx.lineTo(xScale(i), yScale(values[i]));
+      ctx.lineTo(xScale(values.length-1), padding.t + plotH);
+      ctx.lineTo(xScale(0), padding.t + plotH);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawBarChart(canvas, labels, values){
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0,0,w,h);
+
+      const padding = {l:48, r:18, t:16, b:34};
+      const plotW = w - padding.l - padding.r;
+      const plotH = h - padding.t - padding.b;
+
+      const maxV = Math.max(...values, 1);
+      const xCount = values.length;
+      const gap = 10;
+      const barW = plotW / xCount - gap;
+
+      // grid
+      ctx.strokeStyle = 'rgba(255,255,255,.08)';
+      ctx.lineWidth = 1;
+      for(let i=0;i<=4;i++){
+        const y = padding.t + (plotH/4)*i;
+        ctx.beginPath();
+        ctx.moveTo(padding.l, y);
+        ctx.lineTo(w - padding.r, y);
+        ctx.stroke();
+      }
+
+      // bars
+      for(let i=0;i<xCount;i++){
+        const v = values[i];
+        const barH = (v/maxV)*plotH;
+        const x = padding.l + i*(barW+gap);
+        const y = padding.t + (plotH - barH);
+
+        // gradient
+        const g = ctx.createLinearGradient(0,y,w,y+barH);
+        g.addColorStop(0, 'rgba(229,9,20,.95)');
+        g.addColorStop(1, 'rgba(56,189,248,.85)');
+
+        // base bar
+        ctx.fillStyle = g;
+        ctx.strokeStyle = 'rgba(255,255,255,.12)';
+        ctx.lineWidth = 1;
+        roundRect(ctx, x, y, barW, barH, 12);
+        ctx.fill();
+        ctx.stroke();
+
+        // value label (top)
+        ctx.fillStyle = 'rgba(233,238,252,.95)';
+        ctx.font = '12px ui-sans-serif, system-ui';
+        const txt = Math.round(v) + '';
+        ctx.fillText(txt, x + barW/2 - ctx.measureText(txt).width/2, y - 6);
+
+        // x label (rotated if needed)
+        const label = labels[i];
+        ctx.fillStyle = 'rgba(169,179,209,.95)';
+        ctx.font = '12px ui-sans-serif, system-ui';
+        ctx.save();
+        ctx.translate(x + barW/2, h - 10);
+        ctx.rotate(-0.35);
+        ctx.fillText(label, 0, 0);
+        ctx.restore();
+      }
+    }
+
+    function roundRect(ctx, x, y, w, h, r){
+      const rr = Math.min(r, w/2, h/2);
+      ctx.beginPath();
+      ctx.moveTo(x+rr, y);
+      ctx.arcTo(x+w, y, x+w, y+h, rr);
+      ctx.arcTo(x+w, y+h, x, y+h, rr);
+      ctx.arcTo(x, y+h, x, y, rr);
+      ctx.arcTo(x, y, x+w, y, rr);
+      ctx.closePath();
+    }
+
+    // ----------------------
+    // Data filtering + rendering
+    // ----------------------
+    function getFilteredTransactions(){
+      const from = $('fromDate').value;
+      const to = $('toDate').value;
+      const cat = $('category').value;
+
+      const fromD = from ? parseDate(from) : parseDate(dates[0]);
+      const toD = to ? parseDate(to) : parseDate(dates[dates.length-1]);
+
+      return demoData.transactions
+        .filter(t => {
+          const d = parseDate(t.date);
+          const inRange = d >= fromD && d <= toD;
+          const inCat = (cat === 'all') ? true : t.category === cat;
+          return inRange && inCat;
+        });
+    }
+
+    function computeDashboard(filtered){
+      const revenue = filtered.reduce((sum,t)=> sum + (t.status === 'Refunded' ? t.amount : t.amount), 0);
+      const orders = filtered.length;
+      const paidOrders = filtered.filter(t => t.status === 'Paid');
+      const totalPaidAmount = paidOrders.reduce((s,t)=>s+t.amount,0);
+      const aov = paidOrders.length ? (totalPaidAmount/paidOrders.length) : 0;
+
+      // Fake conversion: paid orders / (paid + pending) with mild smoothing.
+      const pending = filtered.filter(t => t.status === 'Pending').length;
+      const denom = paidOrders.length + pending || 1;
+      const conversion = (paidOrders.length/denom)*100;
+
+      return { revenue, orders, aov, conversion, paidOrdersCount: paidOrders.length };
+    }
+
+    const dates = (() => {
+      // derive date list from dataset (unique)
+      const unique = Array.from(new Set(demoData.transactions.map(t=>t.date))).sort();
+      return unique;
+    })();
+
+    function initFilters(){
+      const select = $('category');
+      // Fill category options
+      categories.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.key;
+        opt.textContent = c.name;
+        select.appendChild(opt);
+      });
+
+      // default: last 14 days
+      const to = dates[dates.length-1];
+      const from = dates[Math.max(0, dates.length-14)];
+      $('toDate').value = to;
+      $('fromDate').value = from;
+      $('pillRange').textContent = 'Last 14 days';
+    }
+
+    function updateDashboard(){
+      const filtered = getFilteredTransactions();
+      const dash = computeDashboard(filtered);
+
+      // Animate KPI values (simple)
+      animateText($('[data-kpi="revenue"]'), dash.revenue, (v)=> formatMoney(v));
+      animateText($('[data-kpi="orders"]'), dash.orders, (v)=> formatInt(v));
+      animateText($('[data-kpi="aov"]'), dash.aov, (v)=> formatMoney(v));
+      animateText($('[data-kpi="conversion"]'), dash.conversion, (v)=> v.toFixed(1) + '%');
+
+      // Revenue line chart data by day
+      const from = $('fromDate').value;
+      const to = $('toDate').value;
+      const fromD = parseDate(from);
+      const toD = parseDate(to);
+
+      const dayLabels = [];
+      const revenueByDay = [];
+
+      for(let d = new Date(fromD); d <= toD; d.setDate(d.getDate()+1)){
+        const ymd = d.toISOString().slice(0,10);
+        dayLabels.push(ymd.slice(5)); // MM-DD
+        const dayTx = filtered.filter(t=>t.date===ymd);
+        const dayRevenue = dayTx.reduce((s,t)=> s + t.amount, 0);
+        revenueByDay.push(dayRevenue);
+      }
+
+      // Forecast = simple moving average extension (same length)
+      const forecast = revenueByDay.map((_,i)=>{
+        const a = revenueByDay.slice(Math.max(0,i-2), i+1);
+        const avg = a.reduce((s,v)=>s+v,0)/(a.length||1);
+        return avg * (0.98 + Math.random()*0.06);
+      });
+
+      drawLineChart($('revenueChart'), dayLabels, revenueByDay, forecast);
+
+      // Category bars
+      const catLabels = categories.map(c => c.name);
+      const catValues = categories.map(c => {
+        if($('category').value !== 'all'){
+          return ($('category').value === c.key) ? filtered.length : 0;
+        }
+        return filtered.filter(t => t.category === c.key).length;
+      });
+      drawBarChart($('categoryChart'), catLabels, catValues);
+
+      const selCatKey = $('category').value;
+      $('pillCategory').textContent = selCatKey === 'all' ? 'All Categories' : (categories.find(c=>c.key===selCatKey)?.name || 'Category');
+
+      // Top products (synthetic from category distribution)
+      renderTopProducts(filtered);
+
+      // Table rows
+      const rows = buildTransactionsTable(filtered);
+      renderTable(rows);
+      $('rowCount').textContent = rows.length;
+    }
+
+    function animateText(el, target, formatFn){
+      if(!el) return;
+      const start = Number(el.getAttribute('data-anim') || '0');
+      const duration = 420;
+      const t0 = performance.now();
+
+      function step(now){
+        const p = clamp((now - t0)/duration, 0, 1);
+        const value = start + (target - start) * (p*p*(3-2*p));
+        el.textContent = formatFn(value);
+        if(p < 1) requestAnimationFrame(step);
+      }
+
+      el.setAttribute('data-anim', String(target));
+      requestAnimationFrame(step);
+    }
+
+
+    function renderTopProducts(filtered){
+      // Make 5 product names by category + seed
+      const countsByCat = new Map(categories.map(c=>[c.key,0]));
+      filtered.forEach(t => countsByCat.set(t.category, (countsByCat.get(t.category)||0)+1));
+
+      // pick top categories then create products
+      const sortedCats = categories
+        .map(c => ({...c, count: countsByCat.get(c.key) || 0}))
+        .sort((a,b)=> b.count - a.count);
+
+      const productNames = [
+        'Aurora Pro Cable',
+        'Pulse Noise-Cancel Headset',
+        'Lumen Smart Lamp',
+        'Breeze Essential Skincare',
+        'FlexSport Energy Bottle',
+        'Vanta Trend Hoodie',
+        'ChefCraft Nonstick Pan',
+        'GlowWell Vitamin Serum',
+      ];
+
+      const topWrap = $('topProducts');
+      topWrap.innerHTML = '';
+
+      const topFive = sortedCats.slice(0,3).flatMap((c,idx)=>{
+        // create 2 products per cat (max 5)
+        const items = [];
+        for(let j=0;j<2;j++){
+          items.push({
+            name: productNames[(idx*2 + j) % productNames.length] + (c.count ? '' : ''),
+            qty: Math.max(1, Math.round(c.count * (0.62 + Math.random()*0.35)))
+          });
+        }
+        return items;
+      }).slice(0,5);
+
+      const maxQty = Math.max(...topFive.map(x=>x.qty), 1);
+
+      topFive.forEach(p => {
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const left = document.createElement('div');
+        left.className = 'name';
+        left.textContent = p.name;
+
+        const mid = document.createElement('div');
+        mid.className = 'bar';
+        const span = document.createElement('span');
+        span.style.width = (p.qty/maxQty*100).toFixed(1) + '%';
+        mid.appendChild(span);
+
+        const right = document.createElement('div');
+        right.className = 'qty';
+        right.textContent = p.qty + ' sold';
+
+        row.appendChild(left);
+        row.appendChild(mid);
+        row.appendChild(right);
+        topWrap.appendChild(row);
+      });
+    }
+
+    function buildTransactionsTable(filtered){
+      // keep only a max number for speed
+      const tx = filtered.slice().sort((a,b)=> (b.date.localeCompare(a.date)) || (b.amount - a.amount));
+      return tx.slice(0, 120).map(t => {
+        const catName = categories.find(c=>c.key===t.category)?.name || t.category;
+        return { ...t, categoryName: catName };
+      });
+    }
+
+    let currentSort = { key: 'date', dir: 'desc' };
+
+    function renderTable(rows){
+      const tbody = $('salesTbody');
+      tbody.innerHTML = '';
+
+      const sorted = sortRows(rows, currentSort.key, currentSort.dir);
+      sorted.forEach(r => {
+        const tr = document.createElement('tr');
+
+        const amountText = formatMoney(r.amount);
+
+        const statusColor = r.status === 'Paid' ? 'rgba(34,197,94,.95)'
+          : (r.status === 'Pending' ? 'rgba(245,158,11,.95)' : 'rgba(239,68,68,.95)');
+
+        tr.innerHTML = `
+          <td>${r.date}</td>
+          <td>${r.orderId}</td>
+          <td>${r.customer}</td>
+          <td>${escapeHtml(r.categoryName)}</td>
+          <td>${amountText}</td>
+          <td><span class="pill" style="border-color: rgba(255,255,255,.10); color:${statusColor};">${r.status}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function sortRows(rows, key, dir){
+      const dirMul = dir === 'asc' ? 1 : -1;
+      const getVal = (r) => {
+        switch(key){
+          case 'date': return r.date;
+          case 'orderId': return r.orderId;
+          case 'customer': return r.customer;
+          case 'category': return r.categoryName;
+          case 'amount': return r.amount;
+          case 'status': return r.status;
+          default: return r.date;
+        }
+      };
+
+      return rows.slice().sort((a,b)=>{
+        const va = getVal(a);
+        const vb = getVal(b);
+        if(typeof va === 'number' && typeof vb === 'number') return (va - vb) * dirMul;
+        return String(va).localeCompare(String(vb)) * dirMul;
+      });
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'<','>':'>','"':'"',"'":'&#039;'}[c]));
+    }
+
+    // ----------------------
+    // Events
+    // ----------------------
+    function setRangePill(){
+      const from = $('fromDate').value;
+      const to = $('toDate').value;
+      const fromD = parseDate(from);
+      const toD = parseDate(to);
+      const diffDays = Math.round((toD - fromD)/(1000*60*60*24)) + 1;
+      $('pillRange').textContent = diffDays === 1 ? '1 day' : (diffDays + ' days');
+    }
+
+    document.addEventListener('change', (e) => {
+      if(e.target && (e.target.id === 'fromDate' || e.target.id === 'toDate' || e.target.id === 'category')){
+        setRangePill();
+        updateDashboard();
+      }
+    });
+
+    // Table sorting
+    document.querySelectorAll('thead th').forEach(th => {
+      th.addEventListener('click', () => {
+        const key = th.getAttribute('data-sort');
+        if(!key) return;
+        if(currentSort.key === key){
+          currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+          currentSort.key = key;
+          currentSort.dir = (key === 'amount') ? 'desc' : 'asc';
+        }
+        const filtered = getFilteredTransactions();
+        const rows = buildTransactionsTable(filtered);
+        renderTable(rows);
+      });
+    });
+
+    // Export current filtered table as CSV
+    $('btnExport').addEventListener('click', () => {
+      const filtered = getFilteredTransactions();
+      const rows = buildTransactionsTable(filtered);
+      const header = ['date','orderId','customer','category','amount','status'];
+      const lines = [header.join(',')];
+      rows.forEach(r => {
+        const catName = r.categoryName;
+        lines.push([
+          r.date,
+          r.orderId,
+          r.customer,
+          '"' + catName.replace(/"/g,'""') + '"',
+          r.amount,
+          r.status
+        ].join(','));
+      });
+
+      const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'sales_export.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    // Refresh = just re-render with the existing data (keeps deterministic demo)
+    $('btnRefresh').addEventListener('click', () => {
+      setRangePill();
+      updateDashboard();
+    });
+
+    // Init
+    initFilters();
+    setRangePill();
+    updateDashboard();
+  </script>
+</body>
+</html>
+

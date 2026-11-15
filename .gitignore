@@ -1,0 +1,15 @@
+# Database holds live data - never commit it
+movies.db
+*.db
+
+# Secrets
+.env
+
+# Files uploaded through the admin page
+static/media/uploads/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/

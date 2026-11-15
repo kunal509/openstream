@@ -1,0 +1,16 @@
+{% extends 'base_admin.html' %}
+{% block title %}Admin Portal - Edit Movie{% endblock %}
+{% block content %}
+<div class="admin-box narrow">
+    <h2>Edit Movie</h2>
+    <form action="{{ url_for('update_movie', movie_id=movie['id']) }}" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        {% set v = {'title': form.get('title', movie['title']), 'year': form.get('year', movie['year']),
+                    'description': form.get('description', movie['description'] or ''),
+                    'poster': form.get('poster', movie['poster']), 'video': form.get('video', movie['video'])} %}
+        {% include '_movie_fields.html' %}
+        <button type="submit" class="btn-add">Save Changes</button>
+    </form>
+    <a href="{{ url_for('admin') }}" class="back-link">&larr; Cancel and Return</a>
+</div>
+{% endblock %}

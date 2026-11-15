@@ -1,0 +1,14 @@
+{% extends 'base_admin.html' %}
+{% block title %}Admin Login{% endblock %}
+{% block content %}
+<div class="admin-box narrow">
+    <h2>Admin Login</h2>
+    <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required autofocus autocomplete="current-password">
+        <button type="submit" class="btn-add">Log in</button>
+    </form>
+    <a href="{{ url_for('home') }}" class="back-link">&larr; Return to Main Site</a>
+</div>
+{% endblock %}

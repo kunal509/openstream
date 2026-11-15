@@ -1,0 +1,39 @@
+{% extends 'base_admin.html' %}
+{% block title %}Admin Portal - Manage Movies{% endblock %}
+{% block content %}
+<div class="admin-container">
+    <div class="admin-box">
+        <h2>Add New Movie</h2>
+        <form action="{{ url_for('add_movie') }}" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            {% set v = {'title': form.get('title',''), 'year': form.get('year',''), 'description': form.get('description',''),
+                        'poster': form.get('poster',''), 'video': form.get('video','')} %}
+            {% include '_movie_fields.html' %}
+            <button type="submit" class="btn-add">Add to Library</button>
+        </form>
+    </div>
+
+    <div class="admin-box">
+        <h2>Library ({{ movies|length }})</h2>
+        {% for movie in movies %}
+        <div class="movie-list-item">
+            <div class="movie-info">
+                <span class="movie-title">{{ movie['title'] }}</span>
+                <span class="movie-year">Released: {{ movie['year'] }}</span>
+            </div>
+            <div class="row-actions">
+                <a href="{{ url_for('edit_movie', movie_id=movie['id']) }}" class="btn-edit">Edit</a>
+                <form action="{{ url_for('delete_movie', movie_id=movie['id']) }}" method="POST"
+                      onsubmit="return confirm('Delete &quot;' + this.dataset.title + '&quot;? This cannot be undone.');"
+                      data-title="{{ movie['title'] }}">
+                    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-delete">Delete</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <p class="muted">No movies in the database.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

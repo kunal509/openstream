@@ -1,0 +1,19 @@
+{# Shared form fields. `v` supplies current values: v.title, v.year, ... #}
+<label for="title">Movie Title</label>
+<input type="text" id="title" name="title" required maxlength="120" value="{{ v.title }}" placeholder="e.g. Big Buck Bunny">
+
+<label for="year">Release Year</label>
+<input type="text" id="year" name="year" required pattern="\d{4}" maxlength="4" inputmode="numeric" value="{{ v.year }}" placeholder="e.g. 2008">
+
+<label for="description">Description</label>
+<textarea id="description" name="description" rows="3" maxlength="500" placeholder="A brief summary...">{{ v.description }}</textarea>
+
+<label for="poster">Poster</label>
+<input type="text" id="poster" name="poster" value="{{ v.poster }}" placeholder="filename in static/media, or https:// URL">
+<input type="file" name="poster_file" accept="image/*" aria-label="Upload poster">
+<div class="hint">Upload a file (it wins over the text box) or type a filename / image URL.</div>
+
+<label for="video">Video (MP4 H.264/AAC or WebM)</label>
+<input type="text" id="video" name="video" value="{{ v.video }}" placeholder="filename in static/media, or https:// URL">
+<input type="file" name="video_file" accept="video/mp4,video/webm" aria-label="Upload video">
+<div class="hint">Large videos are better hosted on a CDN / object storage; paste the URL here.</div>
