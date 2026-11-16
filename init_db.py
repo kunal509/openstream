@@ -9,6 +9,7 @@ from app import DB_PATH, init_schema
 # Only public-domain / Creative Commons / your own material belongs here.
 # Poster + video are filenames inside static/media/ or full https:// URLs.
 STARTER_MOVIES = [
+    ("GBU Dandiya", "2026", "Gautam buddha university", "my_film.jpeg", "my_film.mp4"),
     ("Dominate", "2024", "A short original film.", "dominate.jpg", "my_movie.mp4"),
     ("Future Earth", "2050", "A look at a predicted future Earth.", "earth.jpg", "earth.mp4"),
     ("Link Without Hook", "2020", "Original music video.", "link_without_hook.jpg", "song.mp4"),
